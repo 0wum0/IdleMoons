@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Idle Moons V8.9b - UX Improvements (Complete) - Angepasste Kosten</title>
+    <title>Idle Moons V8.9c - Settings & Particles - Weiter Angepasste Kosten</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,46 +24,38 @@
             min-height: 100vh; /* Stellt sicher, dass der Body mindestens die Höhe des Viewports hat */
 
             /* --- Sternenhintergrund-Ebenen --- */
-            /* Mehrere Hintergrundbilder mit radialen Farbverläufen für die Sterne */
             background-image:
-                /* Ebene 1: Klein, langsam */
                 radial-gradient(1px 1px at 50px 150px, #fff, rgba(255,255,255,0)),
                 radial-gradient(1px 1px at 100px 250px, #ddd, rgba(255,255,255,0)),
                 radial-gradient(1px 1px at 200px 50px, #eee, rgba(255,255,255,0)),
-                /* Ebene 2: Mittelgroß, mittlere Geschwindigkeit */
                 radial-gradient(2px 2px at 300px 300px, #fff, rgba(255,255,255,0)),
                 radial-gradient(2px 2px at 450px 100px, #ddd, rgba(255,255,255,0)),
-                /* Ebene 3: Größer, schnell */
                 radial-gradient(3px 3px at 600px 400px, #fff, rgba(255,255,255,0));
-
-            background-repeat: repeat; /* Sterne wiederholen sich */
-
-            /* Unterschiedliche Größen steuern die Dichte der Sterne */
-            background-size:
-                /* Ebene 1 */
-                300px 300px,
-                400px 400px,
-                350px 350px,
-                /* Ebene 2 */
-                500px 500px,
-                600px 600px,
-                /* Ebene 3 */
-                800px 800px;
-
-            /* Animation auf die Hintergrundebenen anwenden */
-            /* Unterschiedliche Dauer erzeugt den Parallax-Effekt */
-            animation:
-                moveStars 200s linear infinite, /* Ebene 1 (langsam) */
-                moveStars 200s linear infinite,
-                moveStars 200s linear infinite,
-                moveStars 150s linear infinite, /* Ebene 2 (mittel) */
-                moveStars 150s linear infinite,
-                moveStars 100s linear infinite; /* Ebene 3 (schnell) */
-
-            /* Wichtig: Ursprüngliche Hintergrundfarbe bleibt unter den Sternen */
-            background-attachment: fixed; /* Optional: Hält den Hintergrund beim Scrollen fixiert */
+            background-repeat: repeat;
+            background-size: 300px 300px, 400px 400px, 350px 350px, 500px 500px, 600px 600px, 800px 800px;
+            animation: moveStars 200s linear infinite, moveStars 200s linear infinite, moveStars 200s linear infinite, moveStars 150s linear infinite, moveStars 150s linear infinite, moveStars 100s linear infinite;
+            background-attachment: fixed;
         }
 
+        /* --- Click Particles --- */
+        .particle {
+            position: absolute;
+            width: 6px; /* Etwas größer */
+            height: 6px;
+            background-color: #fde047; /* Gelb/Gold-Farbe */
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 1;
+            /* Use custom properties set by JS for destination */
+            animation: particle-fade-out 0.7s ease-out forwards;
+        }
+        @keyframes particle-fade-out {
+            to {
+                transform: translate(var(--translateX, 0), var(--translateY, -50px)) scale(0.3); /* Ziel und Verkleinerung */
+                opacity: 0;
+            }
+        }
         /* General Button Styling */
         button {
             transition: all 150ms ease-in-out;
@@ -96,21 +88,20 @@
         }
 
         /* --- Header Layout --- */
-        .game-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background-color: rgba(55, 65, 81, 0.8); /* Leicht transparent, um Sterne durchscheinen zu lassen */ backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); border-radius: 0.75rem; margin-bottom: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .game-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background-color: rgba(55, 65, 81, 0.8); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); border-radius: 0.75rem; margin-bottom: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         .header-left { display: flex; align-items: center; gap: 0.75rem; }
         .header-title { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: #818cf8; margin: 0; }
         .header-resources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem 1rem; flex-grow: 1; margin: 0.5rem 0; padding: 0 1rem; text-align: center; }
         @media (min-width: 768px) { .header-resources { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; } }
-        .header-resources > div { padding: 0.25rem; background-color: rgba(75, 85, 99, 0.6); /* Leicht transparent */ border-radius: 0.375rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 80px; }
+        .header-resources > div { padding: 0.25rem; background-color: rgba(75, 85, 99, 0.6); border-radius: 0.375rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 80px; }
         .header-resources p:first-child { font-size: 0.75rem; color: #d1d5db; margin-bottom: 0.1rem; }
         .header-resources .resource-amount-display { font-size: 1rem; font-weight: 700; line-height: 1.1; margin-top: 0; margin-bottom: 0;}
         .capacity-display { font-size: 0.65rem; color: #9ca3af; line-height: 1; margin-top: 0; margin-bottom: 0.2rem;}
-        .resource-progress-bar-container { margin-top: auto; margin-bottom: 0.1rem; background-color: rgba(75, 85, 99, 0.7); /* Leicht transparent */ border-radius: 0.25rem; overflow: hidden; height: 0.375rem; }
+        .resource-progress-bar-container { margin-top: auto; margin-bottom: 0.1rem; background-color: rgba(75, 85, 99, 0.7); border-radius: 0.25rem; overflow: hidden; height: 0.375rem; }
         .header-resources .rate-display { font-size: 0.75rem; color: #9ca3af; margin-top: 0.1rem; }
         .header-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
         #notification-button.active { color: #f87171; animation: ringBell 1.5s ease-in-out infinite; }
         @keyframes ringBell { 0%, 100% { transform: rotate(0); } 10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); } 20%, 40%, 60%, 80% { transform: rotate(10deg); } }
-
         /* Resource Progress Bar */
         .resource-progress-bar { height: 100%; transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out; }
         .resource-progress-bar-dust { background-color: #f59e0b; }
@@ -124,7 +115,7 @@
         #burger-button { z-index: 60; background-color: rgba(75, 85, 99, 0.8); color: white; padding: 0.5rem; border-radius: 0.375rem; border: none; flex-shrink: 0; }
         #burger-menu-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 55; opacity: 0; transition: opacity 300ms ease-in-out; pointer-events: none; }
         #burger-menu-overlay.active { opacity: 1; pointer-events: auto; }
-        #burger-menu { position: fixed; top: 0; left: 0; bottom: 0; width: 250px; max-width: 80%; background-color: rgba(55, 65, 81, 0.95); /* Leicht transparent */ backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); padding: 1.5rem; box-shadow: 0 0 15px rgba(0,0,0,0.3); transform: translateX(-100%); transition: transform 300ms ease-in-out; z-index: 60; overflow-y: auto; }
+        #burger-menu { position: fixed; top: 0; left: 0; bottom: 0; width: 250px; max-width: 80%; background-color: rgba(55, 65, 81, 0.95); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); padding: 1.5rem; box-shadow: 0 0 15px rgba(0,0,0,0.3); transform: translateX(-100%); transition: transform 300ms ease-in-out; z-index: 60; overflow-y: auto; }
         #burger-menu.active { transform: translateX(0); }
         .menu-item { display: block; width: 100%; text-align: left; padding: 0.75rem 1rem; margin-bottom: 0.5rem; background-color: #4b5563; color: #d1d5db; border: none; }
         .menu-item.active { background-color: #4f46e5; color: white; font-weight: 600; }
@@ -136,24 +127,23 @@
 
         /* --- Anpassung Hauptcontainer --- */
         .main-content-container {
-             background-color: rgba(31, 41, 55, 0.85); /* bg-gray-800 mit Transparenz */
-             backdrop-filter: blur(4px); /* Weichzeichner-Effekt */
+             background-color: rgba(31, 41, 55, 0.85);
+             backdrop-filter: blur(4px);
              -webkit-backdrop-filter: blur(4px);
-             padding: 1.5rem; /* p-6 */
-             border-radius: 0.75rem; /* rounded-xl */
-             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-2xl */
+             padding: 1.5rem;
+             border-radius: 0.75rem;
+             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
              width: 100%;
-             max-width: 48rem; /* max-w-3xl */
+             max-width: 48rem;
              text-align: center;
-             margin-top: 1rem; /* Etwas Abstand zum Header */
+             margin-top: 1rem;
          }
-         @media (min-width: 768px) { /* md */
+         @media (min-width: 768px) {
              .main-content-container {
-                 padding: 2rem; /* md:p-8 */
+                 padding: 2rem;
              }
          }
-
-        /* Toasts */
+         /* Toasts */
         #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 100; display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; }
         .toast { padding: 0.75rem 1.25rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2); color: white; font-size: 0.875rem; max-width: 300px; opacity: 0; animation: toastEnter 0.5s ease-out forwards; position: relative; background-color: rgba(31, 41, 55, 0.8); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
         .toast.toast-info { border-left: 4px solid #0e7490; } .toast.toast-threat { border-left: 4px solid #b91c1c; } .toast.toast-success { border-left: 4px solid #15803d; } .toast.toast-warning { border-left: 4px solid #b45309; }
@@ -168,18 +158,17 @@
         .resource-value { transition: color 0.2s ease-in-out, transform 0.2s ease-in-out; } .resource-value.updated { color: #6ee7b7; transform: scale(1.05); }
         @keyframes flash-bg { 0% { background-color: inherit; } 50% { background-color: rgba(255, 255, 255, 0.2); } 100% { background-color: inherit; } } .flash-upgrade { animation: flash-bg 0.4s ease-out; }
         .num { font-weight: bold; }
-        .upgrade-card, .research-card, .trade-card, .shipyard-card { background-color: rgba(55, 65, 81, 0.85); /* Leicht transparent */ padding: 0.75rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 0.5rem; }
+        .upgrade-card, .research-card, .trade-card, .shipyard-card { background-color: rgba(55, 65, 81, 0.85); padding: 0.75rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 0.5rem; }
         @media (min-width: 640px) { .upgrade-card, .research-card, .trade-card, .shipyard-card { flex-direction: row; align-items: center; } .upgrade-card > div:first-child, .research-card > div:first-child, .trade-card > div:first-child, .shipyard-card > div:first-child { flex-grow: 1; } .upgrade-card > button, .research-card > button, .trade-card > button, .shipyard-card > button { width: auto; margin-top: 0; } }
 
         /* Progress Bars (Inner) */
-        .progress-bar-container { background-color: rgba(75, 85, 99, 0.7); /* Leicht transparent */ border-radius: 0.375rem; overflow: hidden; height: 1.25rem; margin-top: 0.25rem; margin-bottom: 0.5rem;}
+        .progress-bar-container { background-color: rgba(75, 85, 99, 0.7); border-radius: 0.375rem; overflow: hidden; height: 1.25rem; margin-top: 0.25rem; margin-bottom: 0.5rem;}
         .progress-bar { height: 100%; transition: width 0.4s ease-in-out; text-align: center; color: rgba(255, 255, 255, 0.9); font-size: 0.75rem; line-height: 1.25rem; font-weight: 500; text-shadow: 1px 1px 1px rgba(0,0,0,0.3); }
         .progress-bar-threat { background-color: #ef4444; } .progress-bar-prestige { background-color: #f59e0b; } .progress-bar-population { background-color: #16a34a; } .progress-bar-fields { background-color: #ca8a04; }
-
         /* Modals */
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; transition: opacity 300ms ease-in-out; pointer-events: none; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background-color: rgba(31, 41, 55, 0.95); /* Leicht transparent */ padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 300ms ease-in-out; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+        .modal-content { background-color: rgba(31, 41, 55, 0.95); padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 300ms ease-in-out; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
         .modal-overlay.active .modal-content { transform: scale(1); }
         #admin-password-input { background-color: #374151; color: #e5e7eb; border: 1px solid #4b5563; border-radius: 0.375rem; padding: 0.5rem 0.75rem; width: 100%; }
         #changelog-modal-content .changelog { margin-top: 0; padding-top: 0; border-top: none; font-size: 0.875rem; }
@@ -191,7 +180,7 @@
         .game-footer a:hover { color: #c7d2fe; }
 
         /* Planet Graphics */
-        .planet-graphic { width: 150px; height: 150px; border-radius: 50%; margin: 1rem auto; background-color: rgba(75, 85, 99, 0.7); /* Leicht transparent */ display: flex; align-items: center; justify-content: center; font-size: 3rem; border: 3px solid #6b7280; box-shadow: 0 0 15px rgba(0,0,0,0.3); }
+        .planet-graphic { width: 150px; height: 150px; border-radius: 50%; margin: 1rem auto; background-color: rgba(75, 85, 99, 0.7); display: flex; align-items: center; justify-content: center; font-size: 3rem; border: 3px solid #6b7280; box-shadow: 0 0 15px rgba(0,0,0,0.3); }
         .planet-graphic.moon { background: linear-gradient(145deg, #e0e0e0, #a0a0a0); border-color: #c0c0c0; color: #4b5563; }
         .planet-graphic.mars { background: linear-gradient(145deg, #e89a76, #c75e3a); border-color: #d77e5a; color: #fef3c7; }
         .planet-graphic.venus { background: linear-gradient(145deg, #fef3c7, #fde68a); border-color: #facc15; color: #78350f; }
@@ -201,8 +190,8 @@
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
         .shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; transform: translate3d(0, 0, 0); backface-visibility: hidden; perspective: 1000px; }
 
-         /* Spezielle Styles für Elemente innerhalb des Hauptcontainers */
-        .stats-tab-content, .prestige-tab-content, .leaderboard-tab-content {
+         /* Spezielle Styles für Tab-Container */
+        .stats-tab-content, .prestige-tab-content, .leaderboard-tab-content, .settings-tab-content {
              background-color: rgba(55, 65, 81, 0.8); /* bg-gray-800 mit Transparenz */
              padding: 1rem;
              border-radius: 0.5rem; /* rounded-lg */
@@ -262,7 +251,6 @@
                </button>
          </div>
     </header>
-
     <div id="burger-menu-overlay"></div>
     <div id="burger-menu" class="space-y-2">
         <h2 class="text-xl font-semibold text-indigo-300 mb-4">Navigation</h2>
@@ -276,7 +264,7 @@
         <button class="menu-item" data-tab="stats">Statistiken</button>
         <button class="menu-item" data-tab="prestige">Prestige</button>
         <button class="menu-item" data-tab="leaderboard">Rangliste</button>
-    </div>
+        <button class="menu-item" data-tab="settings">Einstellungen</button> </div>
 
     <div class="main-content-container">
         <div class="text-center mb-4">
@@ -314,7 +302,7 @@
                          <li>Baue Schiffe 🚀 in der Werft (benötigt Forschung).</li>
                          <li>Nutze den Handelsposten 📉📈, um Ressourcen zu tauschen.</li>
                          <li>Erreiche hohe Mondstaub-Mengen, um Prestige ✨ auszulösen und permanente Boni (Kristalle) zu erhalten.</li>
-                     </ul>
+                         <li>Unter "Einstellungen" kannst du manuell speichern/laden.</li> </ul>
                  </div>
             </div>
             <div id="build-menu-tab" class="tab-content space-y-3">
@@ -327,15 +315,12 @@
                  <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Klick-Kraft</p><p class="text-xs text-gray-400">Staub/Klick: +<span id="click-power-increase" class="num">1</span> | Lvl: <span id="click-power-level" class="num">0</span></p></div><button id="upgrade-click-power" class="bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">25</span> 🌙</button></div>
                  <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Klick-Multiplikator</p><p class="text-xs text-gray-400">Multipliziert Klick (x<span id="click-multiplier-value" class="num">1</span>) | Lvl: <span id="click-multiplier-level" class="num">0</span></p></div><button id="upgrade-click-multiplier" class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">500</span> 🌙</button></div>
                  <h4 class="text-lg font-semibold mb-2 mt-4 text-gray-300">Energieproduktion (⚡)</h4>
-                 <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Energiegenerator</p><p class="text-xs text-gray-400">Energie/Sek: +<span id="generator-increase" class="num">1</span> | Lvl: <span id="generator-level" class="num">0</span></p></div><button id="upgrade-generator" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">1k</span> 🌙</button></div>
-                 <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Energiespeicher</p><p class="text-xs text-gray-400">Max. Energie: +<span id="storage-increase" class="num">500</span> | Lvl: <span id="storage-level" class="num">0</span></p></div><button id="upgrade-storage" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">250</span> 🔩</button></div>
-                 <h4 class="text-lg font-semibold mb-2 mt-4 text-gray-300">Metallproduktion (🔩)</h4>
-                 <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Asteroiden-Bergbau</p><p class="text-xs text-gray-400">Metall/Sek: +<span id="mining-increase" class="num">1</span> | Lvl: <span id="mining-level" class="num">0</span></p></div><button id="upgrade-mining" class="bg-gray-600 hover:bg-gray-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">5k</span> 🌙</button></div>
+                 <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Energiegenerator</p><p class="text-xs text-gray-400">Energie/Sek: +<span id="generator-increase" class="num">1</span> | Lvl: <span id="generator-level" class="num">0</span></p></div><button id="upgrade-generator" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">800</span> 🌙</button></div> <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Energiespeicher</p><p class="text-xs text-gray-400">Max. Energie: +<span id="storage-increase" class="num">500</span> | Lvl: <span id="storage-level" class="num">0</span></p></div><button id="upgrade-storage" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">200</span> 🔩</button></div> <h4 class="text-lg font-semibold mb-2 mt-4 text-gray-300">Metallproduktion (🔩)</h4>
+                 <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Asteroiden-Bergbau</p><p class="text-xs text-gray-400">Metall/Sek: +<span id="mining-increase" class="num">1</span> | Lvl: <span idv="mining-level" class="num">0</span></p></div><button id="upgrade-mining" class="bg-gray-600 hover:bg-gray-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">400</span> 🌙</button></div>
                  <h4 class="text-lg font-semibold mb-2 mt-4 text-gray-300">Bevölkerungswachstum (👨‍👩‍👧‍👦)</h4>
                  <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Wohnmodule</p><p class="text-xs text-gray-400">Bev./Sek: +<span id="housing-increase" class="num">0.1</span> | Kapazität: +10 | Lvl: <span id="housing-level" class="num">0</span></p></div><button id="upgrade-housing" class="bg-lime-600 hover:bg-lime-700 text-white text-sm font-bold py-2 px-3">Kosten: <span class="num">100</span> 🔩</button></div>
                  <h4 class="text-lg font-semibold mb-2 mt-4 text-gray-300">Lagerkapazität 📦</h4>
-                 <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Lagersilos</p><p class="text-xs text-gray-400"> Max. Staub: +<span id="silo-dust-increase" class="num">0</span> | Max. Metall: +<span id="silo-metal-increase" class="num">0</span> | Lvl: <span id="silo-level" class="num">0</span></p></div><button id="upgrade-silo" class="bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold py-2 px-3"> Kosten: <span id="silo-cost-dust" class="num">0</span> 🌙, <span id="silo-cost-metal" class="num">0</span> 🔩</button></div>
-            </div>
+                 <div class="upgrade-card"><div class="text-left"><p class="font-semibold">Lagersilos</p><p class="text-xs text-gray-400"> Max. Staub: +<span id="silo-dust-increase" class="num">0</span> | Max. Metall: +<span id="silo-metal-increase" class="num">0</span> | Lvl: <span id="silo-level" class="num">0</span></p></div><button id="upgrade-silo" class="bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold py-2 px-3"> Kosten: <span id="silo-cost-dust" class="num">0</span> 🌙, <span id="silo-cost-metal" class="num">0</span> 🔩</button></div> </div>
             <div id="defense-tab" class="tab-content space-y-3">
                  <h3 class="text-xl font-semibold mb-3 text-indigo-300">Verteidigungsanlagen (⚡)</h3>
                  <p class="text-sm text-gray-400 mb-4">Baue Verteidigungsanlagen mit Energie ⚡.</p>
@@ -403,6 +388,13 @@
                        <li>Cmdr. Alex - 1.23P Kristalle ✨</li> <li>Captain Eva - 987T Kristalle ✨</li> <li>Pilot Max - 543T Kristalle ✨</li> <li>Navigator Sam - 210T Kristalle ✨</li> <li>Ensign Riley - 88.8T Kristalle ✨</li> <li>...</li> <li>Du - <span id="leaderboard-player-rank" class="num">???</span> Kristalle ✨</li>
                  </ol>
              </div>
+             <div id="settings-tab" class="tab-content space-y-3 settings-tab-content">
+                 <h3 class="text-xl font-semibold mb-3 text-indigo-300 text-center">Einstellungen ⚙️</h3>
+                 <p class="text-sm text-gray-400 mb-4">Spielstand verwalten.</p>
+                 <button id="manual-save-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Spiel speichern</button>
+                 <button id="manual-load-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">Spiel laden (Seite neu laden)</button>
+                 <p class="text-xs text-gray-500 mt-4">Das Spiel speichert automatisch alle 15 Sekunden.</p>
+                 </div>
         </div>
 
         <footer class="game-footer">
@@ -452,6 +444,7 @@
             </div>
             <div class="changelog mt-0 pt-0 border-none">
                  <ul>
+                     <li>**v8.9c:** Einstellungen-Tab hinzugefügt (man. Speichern/Laden), Kosten (Silo, Mining) weiter gesenkt, Partikel bei Klick.</li>
                      <li>**v8.9b+:** KOSTEN ANGEPASST (geringere Multiplikatoren für leichtere Progression).</li>
                      <li>**v8.9b:** UX: Kapazitätswarnung (Farbe), Speicher-Toast, Tooltips, Hervorhebung kaufbarer Items.</li>
                      <li>**v8.9:** Lagersilos hinzugefügt (erhöht 🌙 & 🔩 Kapazität). Header zeigt nun Max. Kapazität.</li>
@@ -472,12 +465,11 @@
     </div>
 
     <div id="toast-container"></div>
-
     <script>
          // --- Constants ---
          const PRESTIGE_CRYSTAL_EFFECT = 0.01;
          const PRESTIGE_REQUIREMENT_SCALE = 10;
-         const SAVE_KEY = 'idleMoonsGameState_v8.9b_cost_adjusted'; // Geänderter Key, um Konflikte zu vermeiden
+         const SAVE_KEY = 'idleMoonsGameState_v8.9c_costs_particles'; // Key angepasst für neue Version
          const TICK_RATE_MS = 100;
          const THREAT_CHECK_INTERVAL_MS = 10000;
          const THREAT_BASE_CHANCE = 0.1;
@@ -503,13 +495,14 @@
          const PLANETS = { moon: { name: "Mond", icon: "🌙", buildableSlots: 10, graphicClass: "moon" }, mars: { name: "Mars", icon: "🪐", cost: 5e6, description: "Der rote Nachbar.", colonized: false, buildableSlots: 15, graphicClass: "mars" }, venus: { name: "Venus", icon: "🪐", cost: 1e8, description: "Heiß und unwirtlich.", colonized: false, buildableSlots: 8, graphicClass: "venus" }, jupiter: { name: "Jupiter", icon: "🪐", cost: 5e9, description: "Gasriese.", colonized: false, buildableSlots: 25, graphicClass: "jupiter" }, };
          const RESEARCH = { collectorEfficiency: { id: 'collectorEfficiency', name: 'Verbesserte Sammler', description: 'Erhöht Basisproduktion um +10%.', cost: { resources: 10000 }, bonusKey: 'collectorEfficiencyBonus', bonusValue: 1.1, statusElementId: 'research-collector-status', buttonElementId: 'research-collector-button', costElementId: 'research-collector-cost', }, energyEfficiency: { id: 'energyEfficiency', name: 'Energieeffizienz', description: 'Reduziert Energiekosten um 5%.', cost: { energy: 5000 }, bonusKey: 'defenseEnergyCostMultiplier', bonusValue: 0.95, statusElementId: 'research-energy-status', buttonElementId: 'research-energy-button', costElementId: 'research-energy-cost', }, cargoTech: { id: 'cargoTech', name: 'Frachtraumtechnologie', description: 'Schaltet Transporter frei.', cost: { resources: 25000, metal: 1000 }, unlocks: 'shipyard-transport', statusElementId: 'research-cargo-status', buttonElementId: 'research-cargo-button', costElementId: 'research-cargo-cost', costElementIdMetal: 'research-cargo-cost-metal', }, propulsionTech: { id: 'propulsionTech', name: 'Antriebssysteme', description: 'Schaltet Jäger frei.', cost: { resources: 50000, energy: 2000 }, unlocks: 'shipyard-fighter', statusElementId: 'research-propulsion-status', buttonElementId: 'research-propulsion-button', costElementId: 'research-propulsion-cost', costElementIdEnergy: 'research-propulsion-cost-energy', }, colonizationTech: { id: 'colonizationTech', name: 'Kolonisationstechnologie', description: 'Schaltet Kolonieschiffe frei.', cost: { resources: 100000, metal: 5000 }, unlocks: 'shipyard-colony', statusElementId: 'research-colonization-status', buttonElementId: 'research-colonization-button', costElementId: 'research-colonization-cost', costElementIdMetal: 'research-colonization-cost-metal', }, };
          const SHIPS = { transport: { id: 'transport', name: 'Transporter', icon: '🚚', cost: { metal: 1000 }, buildButtonId: 'build-transport', countElementId: 'ship-count-transport', costElementId: 'build-cost-transport', requiresResearch: 'cargoTech' }, fighter: { id: 'fighter', name: 'Jäger', icon: '🚀', cost: { metal: 500, energy: 1000 }, buildButtonId: 'build-fighter', countElementId: 'ship-count-fighter', costElementId: 'build-cost-fighter', costElementIdEnergy: 'build-cost-fighter-energy', requiresResearch: 'propulsionTech' }, colony: { id: 'colony', name: 'Kolonieschiff', icon: '🛰️', cost: { metal: 10000, energy: 5000 }, buildButtonId: 'build-colony', countElementId: 'ship-count-colony', costElementId: 'build-cost-colony', costElementIdEnergy: 'build-cost-colony-energy', requiresResearch: 'colonizationTech' } };
-
          // --- Game State ---
          let gameState = getDefaultGameState();
          let activeTab = 'overview';
 
-         // --- DOM Elements --- (komplette Liste)
+         // --- DOM Elements --- (komplette Liste, inkl. neuer Settings-Buttons)
          const resourceCountElement = document.getElementById('resource-count'); const resourceRateElement = document.getElementById('resource-rate')?.querySelector('span'); const resourceCapacityElement = document.getElementById('resource-capacity'); const energyCountElement = document.getElementById('energy-count'); const energyRateElement = document.getElementById('energy-rate')?.querySelector('span'); const energyCapacityElement = document.getElementById('energy-capacity'); const metalCountElement = document.getElementById('metal-count'); const metalRateElement = document.getElementById('metal-rate')?.querySelector('span'); const metalCapacityElement = document.getElementById('metal-capacity'); const populationCountElement = document.getElementById('population-count'); const populationRateElement = document.getElementById('population-rate')?.querySelector('span'); const populationCapacityElement = document.getElementById('population-capacity'); const manualCollectButton = document.getElementById('manual-collect-button'); const manualCollectAmountElement = document.getElementById('manual-collect-amount'); const prestigeBonusDisplay = document.getElementById('prestige-bonus-display'); const prestigeBonusPercent = document.getElementById('prestige-bonus-percent'); const colonyBonusDisplay = document.getElementById('colony-bonus-display'); const colonyBonusPercent = document.getElementById('colony-bonus-percent'); const prestigeButton = document.getElementById('prestige-button'); const prestigeCurrentCrystals = document.getElementById('prestige-current-crystals'); const prestigeNextCrystals = document.getElementById('prestige-next-crystals'); const prestigeRequirementElement = document.getElementById('prestige-requirement'); const prestigeWarning = document.getElementById('prestige-warning'); const prestigeProgressBarElement = document.getElementById('prestige-progress-bar'); const prestigeProgressPercentElement = document.getElementById('prestige-progress-percent'); const resetButton = document.getElementById('reset-button'); const burgerButton = document.getElementById('burger-button'); const burgerMenuOverlay = document.getElementById('burger-menu-overlay'); const burgerMenu = document.getElementById('burger-menu'); const menuItems = burgerMenu?.querySelectorAll('.menu-item'); const tabContents = document.querySelectorAll('.tab-content'); const tabContentContainer = document.getElementById('tab-content-container'); const planetListContainer = document.getElementById('planet-list'); const leaderboardPlayerRank = document.getElementById('leaderboard-player-rank'); const statTotalResources = document.getElementById('stat-total-resources'); const statTotalEnergy = document.getElementById('stat-total-energy'); const statTotalMetal = document.getElementById('stat-total-metal'); const statPopulation = document.getElementById('stat-population'); const statShipTransport = document.getElementById('stat-ship-transport'); const statShipFighter = document.getElementById('stat-ship-fighter'); const statShipColony = document.getElementById('stat-ship-colony'); const statTotalClicks = document.getElementById('stat-total-clicks'); const statThreatsDefeated = document.getElementById('stat-threats-defeated'); const statPlayTime = document.getElementById('stat-play-time'); const statMoonCrystals = document.getElementById('stat-moon-crystals'); const statColonizedPlanets = document.getElementById('stat-colonized-planets'); const statResearchCompleted = document.getElementById('stat-research-completed'); const adminMenuButtonFooter = document.getElementById('admin-menu-button-footer'); const adminPasswordModalOverlay = document.getElementById('admin-password-modal-overlay'); const adminPasswordInput = document.getElementById('admin-password-input'); const submitPasswordButton = document.getElementById('submit-password-button'); const closePasswordModalButton = document.getElementById('close-password-modal'); const passwordErrorMessage = document.getElementById('password-error-message'); const adminControlsModalOverlay = document.getElementById('admin-controls-modal-overlay'); const closeAdminControlsModalButton = document.getElementById('close-admin-controls-modal'); const adminAddDustButton = document.getElementById('admin-add-dust'); const adminAddEnergyButton = document.getElementById('admin-add-energy'); const adminAddMetalButton = document.getElementById('admin-add-metal'); const adminAddCrystalsButton = document.getElementById('admin-add-crystals'); const tradeDustForEnergyButton = document.getElementById('trade-dust-for-energy'); const tradeEnergyForMetalButton = document.getElementById('trade-energy-for-metal'); const toastContainer = document.getElementById('toast-container'); const notificationButton = document.getElementById('notification-button'); const currentLocationNameElement = document.getElementById('current-location-name'); const locationGraphicElement = document.getElementById('location-graphic'); const overviewFieldsCurrentElement = document.getElementById('overview-fields-current'); const overviewFieldsMaxElement = document.getElementById('overview-fields-max'); const overviewFieldsBarElement = document.getElementById('overview-fields-bar'); const overviewPopulationCurrentElement = document.getElementById('overview-population-current'); const overviewPopulationMaxElement = document.getElementById('overview-population-max'); const overviewPopulationBarElement = document.getElementById('overview-population-bar'); const resourceBarDust = document.getElementById('resource-bar-dust'); const resourceBarEnergy = document.getElementById('resource-bar-energy'); const resourceBarMetal = document.getElementById('resource-bar-metal'); const resourceBarPopulation = document.getElementById('resource-bar-population'); const changelogButtonFooter = document.getElementById('changelog-button-footer'); const changelogModalOverlay = document.getElementById('changelog-modal-overlay'); const closeChangelogModalButton = document.getElementById('close-changelog-modal');
+         const manualSaveButton = document.getElementById('manual-save-button'); // NEU
+         const manualLoadButton = document.getElementById('manual-load-button'); // NEU
          const headerDustElement = document.getElementById('header-dust'); const headerEnergyElement = document.getElementById('header-energy'); const headerMetalElement = document.getElementById('header-metal'); const headerPopulationElement = document.getElementById('header-population');
 
          // Upgrade Elements Map
@@ -522,7 +515,6 @@
          function triggerResourceUpdateAnimation(element) { if (element) { element.classList.add('updated'); setTimeout(() => { element.classList.remove('updated'); }, 200); } }
          function showToast(message, type = 'info', duration = 5000) { if (!toastContainer) return; const toast = document.createElement('div'); toast.className = `toast toast-${type}`; const messageSpan = document.createElement('span'); messageSpan.innerHTML = message; const closeButton = document.createElement('button'); closeButton.innerHTML = '&times;'; closeButton.className = 'toast-close-button'; closeButton.onclick = () => removeToast(toast); toast.appendChild(messageSpan); toast.appendChild(closeButton); toastContainer.appendChild(toast); const timeoutId = setTimeout(() => removeToast(toast), duration); toast.dataset.timeoutId = timeoutId; }
          function removeToast(toastElement) { if (!toastElement || !toastElement.parentNode) return; clearTimeout(toastElement.dataset.timeoutId); toastElement.classList.add('exiting'); toastElement.addEventListener('animationend', () => { if (toastElement.parentNode === toastContainer) { toastContainer.removeChild(toastElement); } }, { once: true }); }
-
          // --- Game Logic ---
          function getStateNum(key, defaultValue = 0) { return Number(gameState[key]) || defaultValue; }
          function calculateCost(baseCostKey, multiplierKey, level) { const base = gameState[baseCostKey] !== undefined ? getStateNum(baseCostKey) : 10; const mult = gameState[multiplierKey] !== undefined ? getStateNum(multiplierKey, 1.1) : 1.1; return Math.floor(base * Math.pow(mult, level || 0)); }
@@ -572,12 +564,11 @@
              const colonizedCount = countColonizedPlanets(); if (colonyBonusDisplay) { colonyBonusDisplay.classList.toggle('hidden', colonizedCount <= 0); if (colonizedCount > 0) { updateText(colonyBonusPercent, ((colonyBonus - 1) * 100).toFixed(0)); } }
 
              // Update Active Tab
-             try { switch(activeTab) { case 'overview': updateOverviewTab(currentResources, currentEnergy, currentMetal, currentPopulation); break; case 'build-menu': updateBuildMenuTab(currentResources, currentEnergy, currentMetal); break; case 'defense': updateDefenseTab(currentResources, currentEnergy, currentMetal); break; case 'shipyard': updateShipyardTab(currentResources, currentEnergy, currentMetal); break; case 'research': updateResearchTab(currentResources, currentEnergy, currentMetal); break; case 'planets': updatePlanetsTab(currentResources, currentEnergy, currentMetal); break; case 'trade': updateTradeTab(currentResources, currentEnergy, currentMetal); break; case 'stats': updateStatsTab(); break; case 'prestige': updatePrestigeTab(currentResources); break; case 'leaderboard': updateLeaderboardTab(); break; } } catch (error) { console.error(`Error updating tab ${activeTab}:`, error); }
+             try { switch(activeTab) { case 'overview': updateOverviewTab(currentResources, currentEnergy, currentMetal, currentPopulation); break; case 'build-menu': updateBuildMenuTab(currentResources, currentEnergy, currentMetal); break; case 'defense': updateDefenseTab(currentResources, currentEnergy, currentMetal); break; case 'shipyard': updateShipyardTab(currentResources, currentEnergy, currentMetal); break; case 'research': updateResearchTab(currentResources, currentEnergy, currentMetal); break; case 'planets': updatePlanetsTab(currentResources, currentEnergy, currentMetal); break; case 'trade': updateTradeTab(currentResources, currentEnergy, currentMetal); break; case 'stats': updateStatsTab(); break; case 'prestige': updatePrestigeTab(currentResources); break; case 'leaderboard': updateLeaderboardTab(); break; case 'settings': updateSettingsTab(); break; /* NEU */ } } catch (error) { console.error(`Error updating tab ${activeTab}:`, error); }
 
              // Update Notification Button State
              if (notificationButton) { notificationButton.classList.toggle('active', !!gameState.activeThreat); }
          }
-
          // --- Tab Specific Update Functions ---
          function updateOverviewTab(currentResources, currentEnergy, currentMetal, currentPopulation) { const currentLocationId = 'moon'; const locationData = PLANETS[currentLocationId]; updateText(currentLocationNameElement, locationData.name); if (locationGraphicElement) { locationGraphicElement.className = `planet-graphic ${locationData.graphicClass || 'moon'}`; locationGraphicElement.innerHTML = `<span>${locationData.icon || '📍'}</span>`; } const maxFields = locationData.buildableSlots || 10; const currentFields = 0; updateText(overviewFieldsCurrentElement, currentFields); updateText(overviewFieldsMaxElement, maxFields); const fieldsPercent = maxFields > 0 ? Math.min(100, (currentFields / maxFields) * 100) : 0; if(overviewFieldsBarElement) overviewFieldsBarElement.style.width = `${fieldsPercent}%`; const capacity = calculatePopulationCapacity(); updateText(overviewPopulationCurrentElement, formatIdleNumber(currentPopulation, 0)); updateText(overviewPopulationMaxElement, formatIdleNumber(capacity, 0)); const populationPercent = capacity > 0 ? Math.min(100, (currentPopulation / capacity) * 100) : 0; if(overviewPopulationBarElement) overviewPopulationBarElement.style.width = `${populationPercent}%`; }
          function updateBuildMenuTab(currentResources, currentEnergy, currentMetal) { const updateSingleResourceCard = (key, costResKey, costIcon, effectDescFunc) => { const els = upgradeElements[key]; if (!els || !els.button) return; const levelProp = `${key}Level`, baseCostProp = `${key}BaseCost`, multiplierProp = `${key}CostMultiplier`; const level = getStateNum(levelProp); let cost; if (key === 'shield' || key === 'turret') { cost = calculateDefenseUpgradeCost(baseCostProp, multiplierProp, level); } else { cost = calculateCost(baseCostProp, multiplierProp, level); } const canAfford = getStateNum(costResKey) >= cost; updateButtonState(els.button, canAfford); updateText(els.level, level); if (els.increase) updateText(els.increase, formatIdleNumber(getStateNum(`${key}BaseIncrease`, 1), (key.includes('storage') || key.includes('silo')) ? 1:0)); if (els.value) updateText(els.value, Math.pow(1.5, level).toFixed(1)); let tooltipText = effectDescFunc ? effectDescFunc(level + 1) : `Level ${level + 1}`; tooltipText += ` Kosten: ${formatIdleNumber(cost)} ${costIcon}`; setTooltip(els.button, tooltipText); const costSpan = els.button.querySelector('.num'); if (costSpan) { updateText(costSpan, formatIdleNumber(cost)); } else { els.button.innerHTML = `Kosten: <span class="num">${formatIdleNumber(cost)}</span> ${costIcon}`; } }; const collectorDesc = (lvl) => `Level ${lvl}: +${formatIdleNumber(getStateNum('collectorBaseIncrease'))}/s.`; const roverDesc = (lvl) => `Level ${lvl}: +${formatIdleNumber(getStateNum('roverBaseIncrease'))}/s.`; const efficiencyDesc = (lvl) => `Level ${lvl}: Verdoppelt Produktion (x${Math.pow(2,lvl)}).`; const clickPowerDesc = (lvl) => `Level ${lvl}: +${formatIdleNumber(getStateNum('clickPowerBaseIncrease'))}/Klick.`; const clickMultDesc = (lvl) => `Level ${lvl}: Multipliziert Klick (x${Math.pow(1.5, lvl).toFixed(1)})`; const generatorDesc = (lvl) => `Level ${lvl}: +${formatIdleNumber(getStateNum('generatorBaseIncrease'))}/s.`; const storageDesc = (lvl) => `Level ${lvl}: Max. Energie +${formatIdleNumber(ENERGY_STORAGE_CAPACITY_PER_LEVEL)}.`; const miningDesc = (lvl) => `Level ${lvl}: +${formatIdleNumber(getStateNum('miningBaseIncrease'))}/s.`; const housingDesc = (lvl) => `Level ${lvl}: +${getStateNum('housingBaseIncrease', 0.1).toFixed(1)} Bev./s, +${HOUSING_CAPACITY_PER_LEVEL} Kapazität.`; updateSingleResourceCard('collector', 'resources', '🌙', collectorDesc); updateSingleResourceCard('rover', 'resources', '🌙', roverDesc); updateSingleResourceCard('efficiency', 'resources', '🌙', efficiencyDesc); updateSingleResourceCard('clickPower', 'resources', '🌙', clickPowerDesc); updateSingleResourceCard('clickMultiplier', 'resources', '🌙', clickMultDesc); updateSingleResourceCard('generator', 'resources', '🌙', generatorDesc); updateSingleResourceCard('storage', 'metal', '🔩', storageDesc); updateSingleResourceCard('mining', 'resources', '🌙', miningDesc); updateSingleResourceCard('housing', 'metal', '🔩', housingDesc); const siloEls = upgradeElements.silo; if (siloEls && siloEls.button) { const siloLevel = getStateNum('siloLevel'); const siloCosts = calculateMultiResourceCost({ resources: gameState.siloBaseCostDust, metal: gameState.siloBaseCostMetal }, { resources: gameState.siloCostMultiplier, metal: gameState.siloCostMultiplier }, siloLevel); const canAffordSilo = currentResources >= siloCosts.resources && currentMetal >= siloCosts.metal; updateButtonState(siloEls.button, canAffordSilo); updateText(siloEls.level, siloLevel); updateText(siloEls.dustIncrease, formatIdleNumber(SILO_DUST_CAPACITY_PER_LEVEL)); updateText(siloEls.metalIncrease, formatIdleNumber(SILO_METAL_CAPACITY_PER_LEVEL)); updateText(siloEls.costDust, formatIdleNumber(siloCosts.resources)); updateText(siloEls.costMetal, formatIdleNumber(siloCosts.metal)); const nextDustCap = BASE_DUST_CAPACITY + ((siloLevel + 1) * SILO_DUST_CAPACITY_PER_LEVEL); const nextMetalCap = BASE_METAL_CAPACITY + ((siloLevel + 1) * SILO_METAL_CAPACITY_PER_LEVEL); setTooltip(siloEls.button, `Level ${siloLevel + 1}: Max Staub ${formatIdleNumber(nextDustCap)}, Max Metall ${formatIdleNumber(nextMetalCap)}. Kosten: ${formatIdleNumber(siloCosts.resources)} 🌙, ${formatIdleNumber(siloCosts.metal)} 🔩`); if (siloEls.button && !siloEls.button.querySelector('#silo-cost-dust')) { siloEls.button.innerHTML = `Kosten: <span id="silo-cost-dust" class="num">${formatIdleNumber(siloCosts.resources)}</span> 🌙, <span id="silo-cost-metal" class="num">${formatIdleNumber(siloCosts.metal)}</span> 🔩`; } } }
@@ -589,11 +580,66 @@
          function updateStatsTab() { const playTimeSeconds = (Date.now() - getStateNum('startTime', Date.now())) / 1000; updateText(statTotalResources, formatIdleNumber(getStateNum('totalResourcesCollected') + getStateNum('resources'))); updateText(statTotalEnergy, formatIdleNumber(getStateNum('totalEnergyGenerated') + getStateNum('energy'))); updateText(statTotalMetal, formatIdleNumber(getStateNum('totalMetalGenerated') + getStateNum('metal'))); updateText(statPopulation, formatIdleNumber(getStateNum('population'), 0)); updateText(statShipTransport, formatIdleNumber(gameState.ships?.transport || 0, 0)); updateText(statShipFighter, formatIdleNumber(gameState.ships?.fighter || 0, 0)); updateText(statShipColony, formatIdleNumber(gameState.ships?.colony || 0, 0)); updateText(statTotalClicks, formatIdleNumber(getStateNum('totalManualClicks'), 0)); updateText(statThreatsDefeated, formatIdleNumber(getStateNum('threatsDefeated'), 0)); updateText(statPlayTime, formatTime(playTimeSeconds)); updateText(statMoonCrystals, formatIdleNumber(getStateNum('moonCrystals'))); updateText(statColonizedPlanets, formatIdleNumber(countColonizedPlanets(), 0)); updateText(statResearchCompleted, formatIdleNumber(countCompletedResearch(), 0)); }
          function updatePrestigeTab(currentResources) { const prestigeReq = getPrestigeRequirement(); const potentialNewCrystals = calculatePotentialNewCrystals(); const canAffordPrestige = currentResources >= prestigeReq; const canPrestigeNow = canAffordPrestige && (potentialNewCrystals > 0); updateText(prestigeCurrentCrystals, formatIdleNumber(getStateNum('moonCrystals'))); updateText(prestigeNextCrystals, formatIdleNumber(potentialNewCrystals)); updateText(prestigeRequirementElement, formatIdleNumber(prestigeReq)); updateButtonState(prestigeButton, canPrestigeNow); if (prestigeWarning) prestigeWarning.classList.toggle('hidden', canPrestigeNow); if(prestigeButton) { let title = `Prestige für ${formatIdleNumber(potentialNewCrystals)} Kristalle ✨. `; if(!canAffordPrestige) title += `Benötigt ${formatIdleNumber(prestigeReq)} 🌙.`; else if (potentialNewCrystals <= 0) title += `Keine neuen Kristalle zu gewinnen.`; else title += `Setzt Fortschritt zurück (außer Kristalle, Forschung, Kolonien).`; setTooltip(prestigeButton, title); } const progressPercent = prestigeReq > 0 ? Math.min(100, (currentResources / prestigeReq) * 100) : 0; if (prestigeProgressBarElement) prestigeProgressBarElement.style.width = `${progressPercent}%`; updateText(prestigeProgressPercentElement, `${progressPercent.toFixed(0)}%`); }
          function updateLeaderboardTab() { updateText(leaderboardPlayerRank, formatIdleNumber(getStateNum('moonCrystals'))); }
+         function updateSettingsTab() { /* Derzeit keine dynamischen Updates nötig */ }
 
          // --- Event Listeners ---
          function setupEventListeners() {
              console.log("Setting up event listeners...");
-             manualCollectButton?.addEventListener('click', () => { const amount = calculateManualCollectAmount(); const currentRes = getStateNum('resources'); const capacity = calculateResourceCapacity(); const gain = Math.min(amount, Math.max(0, capacity - currentRes)); if (gain > 0) { gameState.resources = currentRes + gain; gameState.totalResourcesCollected = getStateNum('totalResourcesCollected') + gain; } gameState.totalManualClicks = getStateNum('totalManualClicks') + 1; triggerAnimation(resourceCountElement, 'pulse-once'); if (currentRes >= capacity && gain <= 0) { showToast("Mondstaub-Lager ist voll!", "warning", 2000); } updateUI(); });
+             manualCollectButton?.addEventListener('click', () => {
+                 const amount = calculateManualCollectAmount();
+                 const currentRes = getStateNum('resources');
+                 const capacity = calculateResourceCapacity();
+                 const gain = Math.min(amount, Math.max(0, capacity - currentRes));
+                 if (gain > 0) {
+                     gameState.resources = currentRes + gain;
+                     gameState.totalResourcesCollected = getStateNum('totalResourcesCollected') + gain;
+                 }
+                 gameState.totalManualClicks = getStateNum('totalManualClicks') + 1;
+                 triggerAnimation(resourceCountElement, 'pulse-once');
+
+                 // Particle Effect Logic
+                 const rect = manualCollectButton.getBoundingClientRect();
+                 const buttonCenterX = rect.left + rect.width / 2 + window.scrollX; // Berücksichtige Scroll-Position
+                 const buttonCenterY = rect.top + rect.height / 2 + window.scrollY; // Berücksichtige Scroll-Position
+                 const particleCount = 15; // Anzahl Partikel
+
+                 for (let i = 0; i < particleCount; i++) {
+                     const particle = document.createElement('div');
+                     particle.classList.add('particle');
+                     document.body.appendChild(particle);
+
+                     // Startposition Mitte des Buttons + kleiner zufälliger Offset
+                     const initialX = buttonCenterX + (Math.random() - 0.5) * rect.width * 0.8;
+                     const initialY = buttonCenterY + (Math.random() - 0.5) * rect.height * 0.8;
+                     particle.style.left = `${initialX}px`;
+                     particle.style.top = `${initialY}px`;
+
+                     // Zufällige Animationsverzögerung für gestaffelten Effekt
+                     particle.style.animationDelay = `${Math.random() * 0.1}s`;
+
+                     // Zufällige Flugbahn über CSS Custom Properties
+                     const angle = Math.random() * Math.PI * 2; // Zufällige Richtung
+                     const distance = Math.random() * 50 + 25; // Zufällige Distanz
+                     const moveX = Math.cos(angle) * distance;
+                     const moveY = Math.sin(angle) * distance - 60; // Eher nach oben (-60)
+
+                     particle.style.setProperty('--translateX', `${moveX}px`);
+                     particle.style.setProperty('--translateY', `${moveY}px`);
+
+                     particle.addEventListener('animationend', () => {
+                          if (particle.parentNode) {
+                             particle.parentNode.removeChild(particle);
+                          }
+                     }, { once: true }); // Wichtig: Event Listener nur einmal ausführen
+                 }
+
+                 if (currentRes >= capacity && gain <= 0) {
+                     showToast("Mondstaub-Lager ist voll!", "warning", 2000);
+                 }
+                 updateUI();
+             });
+
+             // --- (Restliche Event Listener wie zuvor, inkl. Settings Buttons) ---
              function addUpgradeListener(upgradeKey, costResource) { const elements = upgradeElements[upgradeKey]; if (!elements || !elements.button) return; elements.button.addEventListener('click', () => { const levelProp = `${upgradeKey}Level`, baseCostProp = `${upgradeKey}BaseCost`, multiplierProp = `${upgradeKey}CostMultiplier`; const currentLevel = getStateNum(levelProp); let cost; if (upgradeKey === 'shield' || upgradeKey === 'turret') { cost = calculateDefenseUpgradeCost(baseCostProp, multiplierProp, currentLevel); } else { cost = calculateCost(baseCostProp, multiplierProp, currentLevel); } const currentRes = getStateNum(costResource); if (currentRes >= cost) { gameState[costResource] = currentRes - cost; gameState[levelProp] = currentLevel + 1; triggerAnimation(elements.button.closest('.upgrade-card') || elements.button, 'flash-upgrade'); updateUI(); } }); }
              function addMultiResourceUpgradeListener(upgradeKey, costStateKeys) { const elements = upgradeElements[upgradeKey]; if (!elements || !elements.button) return; elements.button.addEventListener('click', () => { const levelProp = `${upgradeKey}Level`; const currentLevel = getStateNum(levelProp); const costs = calculateMultiResourceCost({ resources: gameState.siloBaseCostDust, metal: gameState.siloBaseCostMetal }, { resources: gameState.siloCostMultiplier, metal: gameState.siloCostMultiplier }, currentLevel); let canAfford = true; for (const resource in costs) { if (getStateNum(resource) < costs[resource]) { canAfford = false; break; } } if (canAfford) { for (const resource in costs) { gameState[resource] = getStateNum(resource) - costs[resource]; } gameState[levelProp] = currentLevel + 1; triggerAnimation(elements.button.closest('.upgrade-card') || elements.button, 'flash-upgrade'); updateUI(); } else { showToast(`Nicht genug Ressourcen für Silo-Upgrade!`, 'warning'); } }); }
              addUpgradeListener('collector', 'resources'); addUpgradeListener('rover', 'resources'); addUpgradeListener('efficiency', 'resources'); addUpgradeListener('clickPower', 'resources'); addUpgradeListener('clickMultiplier', 'resources'); addUpgradeListener('generator', 'resources'); addUpgradeListener('storage', 'metal'); addUpgradeListener('mining', 'resources'); addUpgradeListener('housing', 'metal'); addUpgradeListener('shield', 'energy'); addUpgradeListener('turret', 'energy'); addMultiResourceUpgradeListener('silo', ['resources', 'metal']);
@@ -606,6 +652,8 @@
              const openPasswordModal = () => { if (adminPasswordModalOverlay) { adminPasswordInput.value = ''; passwordErrorMessage?.classList.add('hidden'); adminPasswordModalOverlay.classList.add('active'); adminPasswordInput.focus(); }}; adminMenuButtonFooter?.addEventListener('click', openPasswordModal); closePasswordModalButton?.addEventListener('click', () => adminPasswordModalOverlay?.classList.remove('active')); adminPasswordModalOverlay?.addEventListener('click', (event) => { if (event.target === adminPasswordModalOverlay) adminPasswordModalOverlay.classList.remove('active'); }); submitPasswordButton?.addEventListener('click', () => { if (adminPasswordInput?.value === ADMIN_PASSWORD) { adminPasswordModalOverlay?.classList.remove('active'); adminControlsModalOverlay?.classList.add('active'); } else { if(passwordErrorMessage) passwordErrorMessage.classList.remove('hidden'); if(adminPasswordInput) adminPasswordInput.value = ''; triggerAnimation(adminPasswordModalOverlay?.querySelector('.modal-content'), 'shake'); } }); adminPasswordInput?.addEventListener('keypress', (event) => { if (event.key === 'Enter') { event.preventDefault(); submitPasswordButton?.click(); } }); closeAdminControlsModalButton?.addEventListener('click', () => adminControlsModalOverlay?.classList.remove('active')); adminControlsModalOverlay?.addEventListener('click', (event) => { if (event.target === adminControlsModalOverlay) adminControlsModalOverlay.classList.remove('active'); }); adminAddDustButton?.addEventListener('click', () => { gameState.resources = Math.min(calculateResourceCapacity(), getStateNum('resources') + 1e6); updateUI(); }); adminAddEnergyButton?.addEventListener('click', () => { gameState.energy = Math.min(calculateEnergyCapacity(), getStateNum('energy') + 1e6); updateUI(); }); adminAddMetalButton?.addEventListener('click', () => { gameState.metal = Math.min(calculateMetalCapacity(), getStateNum('metal') + 1e6); updateUI(); }); adminAddCrystalsButton?.addEventListener('click', () => { gameState.moonCrystals = getStateNum('moonCrystals') + 100; updateUI(); });
              notificationButton?.addEventListener('click', () => { if (gameState.activeThreat) { const cost = calculateThreatCost(); const toastMessage = `🚨 ${gameState.activeThreat.description}<br>Stärke: <span class="threat-health-display">${formatIdleNumber(gameState.activeThreat.currentHealth)}</span><br><button onclick="neutralizeThreatFromToast(this)" data-cost="${cost}" class="mt-2 w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-1 px-2 rounded text-xs">Abwehren (${formatIdleNumber(cost)} ⚡)</button>`; showToast(toastMessage, 'threat', 15000); } else { showToast("Keine neuen Benachrichtigungen.", 'info', 3000); } });
              changelogButtonFooter?.addEventListener('click', () => changelogModalOverlay?.classList.add('active')); closeChangelogModalButton?.addEventListener('click', () => changelogModalOverlay?.classList.remove('active')); changelogModalOverlay?.addEventListener('click', (event) => { if (event.target === changelogModalOverlay) changelogModalOverlay.classList.remove('active'); });
+             manualSaveButton?.addEventListener('click', saveGame); // NEU
+             manualLoadButton?.addEventListener('click', () => window.location.reload()); // NEU
              console.log("Event listeners setup complete.");
          }
 
@@ -623,77 +671,40 @@
          function gameLoop() { const now = Date.now(); const lastUpdate = getStateNum('lastUpdate', now); const deltaTime = Math.max(0, (now - lastUpdate) / 1000); if (deltaTime > 0) { const resourceGain = calculateResourceRate() * deltaTime; const energyGain = calculateEnergyRate() * deltaTime; const metalGain = calculateMetalRate() * deltaTime; const populationGain = calculatePopulationRate() * deltaTime; const currentRes = getStateNum('resources'); const resCapacity = calculateResourceCapacity(); const actualResourceGain = Math.min(resourceGain, Math.max(0, resCapacity - currentRes)); if (actualResourceGain > 0) { gameState.resources = currentRes + actualResourceGain; gameState.totalResourcesCollected = getStateNum('totalResourcesCollected') + actualResourceGain; } const currentNrg = getStateNum('energy'); const energyCapacity = calculateEnergyCapacity(); const actualEnergyGain = Math.min(energyGain, Math.max(0, energyCapacity - currentNrg)); if (actualEnergyGain > 0) { gameState.energy = currentNrg + actualEnergyGain; gameState.totalEnergyGenerated = getStateNum('totalEnergyGenerated') + energyGain; } const currentMet = getStateNum('metal'); const metalCapacity = calculateMetalCapacity(); const actualMetalGain = Math.min(metalGain, Math.max(0, metalCapacity - currentMet)); if (actualMetalGain > 0) { gameState.metal = currentMet + actualMetalGain; gameState.totalMetalGenerated = getStateNum('totalMetalGenerated') + actualMetalGain; } const currentPop = getStateNum('population'); const popCapacity = calculatePopulationCapacity(); const actualOfflinePopulationGain = Math.min(populationGain, Math.max(0, popCapacity - currentPop)); if (actualOfflinePopulationGain > 0) { gameState.population = currentPop + actualOfflinePopulationGain; } handleThreatDamage(deltaTime); } gameState.lastUpdate = now; updateUI(); }
 
          // --- Persistence (Save/Load) ---
-         function saveGame() { try { gameState.lastUpdate = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(gameState)); showToast("Spiel gespeichert!", 'success', 1500); /* Save indicator */ } catch (error) { console.error("Save failed:", error); showToast("Speichern fehlgeschlagen!", "warning"); } }
+         function saveGame() { try { gameState.lastUpdate = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(gameState)); showToast("Spiel gespeichert!", 'success', 1500); } catch (error) { console.error("Save failed:", error); showToast("Speichern fehlgeschlagen!", "warning"); } }
          function loadGame() { const savedState = localStorage.getItem(SAVE_KEY); const defaultState = getDefaultGameState(); if (savedState) { try { const loadedState = JSON.parse(savedState); gameState = { ...defaultState, ...loadedState }; gameState.colonizedPlanets = { ...(defaultState.colonizedPlanets || {}), ...(loadedState.colonizedPlanets || {}) }; gameState.research = { ...(defaultState.research || {}), ...(loadedState.research || {}) }; gameState.ships = { ...(defaultState.ships || {}), ...(loadedState.ships || {}) }; gameState.activeThreat = loadedState.activeThreat || null; const now = Date.now(); const lastUpdate = getStateNum('lastUpdate', now); const timeDiffSeconds = Math.max(0, (now - lastUpdate) / 1000); if (timeDiffSeconds > 1) { const offlineResourceRate = calculateResourceRate(); const offlineEnergyRate = calculateEnergyRate(); const offlineMetalRate = calculateMetalRate(); const offlinePopulationRate = calculatePopulationRate(); const offlineResourceGains = offlineResourceRate * timeDiffSeconds; const offlineEnergyGains = offlineEnergyRate * timeDiffSeconds; const offlineMetalGains = offlineMetalRate * timeDiffSeconds; const offlinePopulationGainsPotential = offlinePopulationRate * timeDiffSeconds; let offlineThreatDefeated = false; let offlineThreatDamage = 0; if (gameState.activeThreat) { const initialThreatHealth = gameState.activeThreat.currentHealth || 0; const offlineTurretDPS = calculateTurretDPS(); offlineThreatDamage = offlineTurretDPS * timeDiffSeconds; gameState.activeThreat.currentHealth = Math.max(0, initialThreatHealth - offlineThreatDamage); if (gameState.activeThreat.currentHealth <= 0) offlineThreatDefeated = true; } const currentRes = getStateNum('resources'); const resCapacity = calculateResourceCapacity(); const actualOfflineResourceGain = Math.min(offlineResourceGains, Math.max(0, resCapacity - currentRes)); gameState.resources = currentRes + actualOfflineResourceGain; gameState.totalResourcesCollected = getStateNum('totalResourcesCollected') + actualOfflineResourceGain; const currentNrg = getStateNum('energy'); const energyCap = calculateEnergyCapacity(); const actualOfflineEnergyGain = Math.min(offlineEnergyGains, Math.max(0, energyCap - currentNrg)); gameState.energy = currentNrg + actualOfflineEnergyGain; gameState.totalEnergyGenerated = getStateNum('totalEnergyGenerated') + offlineEnergyGains; const currentMet = getStateNum('metal'); const metalCapacity = calculateMetalCapacity(); const actualOfflineMetalGain = Math.min(offlineMetalGains, Math.max(0, metalCapacity - currentMet)); gameState.metal = currentMet + actualOfflineMetalGain; gameState.totalMetalGenerated = getStateNum('totalMetalGenerated') + actualOfflineMetalGain; const currentPop = getStateNum('population'); const popCap = calculatePopulationCapacity(); const actualOfflinePopulationGain = Math.min(offlinePopulationGainsPotential, Math.max(0, popCap - currentPop)); gameState.population = currentPop + actualOfflinePopulationGain; let noticeText = `Willkommen zurück! Offline (${formatTime(timeDiffSeconds)}):<br><span class='font-bold text-yellow-300'>+${formatIdleNumber(actualOfflineResourceGain)}</span> 🌙 | <span class='font-bold text-cyan-300'>+${formatIdleNumber(actualOfflineEnergyGain)}</span>⚡ | <span class='font-bold text-slate-300'>+${formatIdleNumber(actualOfflineMetalGain)}</span> 🔩 | <span class='font-bold text-green-300'>+${formatIdleNumber(actualOfflinePopulationGain, 0)}</span> 👨‍👩‍👧‍👦`; if (offlineThreatDefeated) { noticeText += "<br><span class='font-bold text-green-400'>Bedrohung offline abgewehrt!</span>"; resolveThreat(true); } else if (gameState.activeThreat && offlineThreatDamage > 0) { noticeText += `<br><span class='font-bold text-red-400'>Bedrohung offline geschwächt! (${formatIdleNumber(gameState.activeThreat.currentHealth)})</span>`; } showToast(noticeText, 'info', 8000); } gameState.lastUpdate = now; } catch (error) { console.error("Load failed, resetting game:", error); localStorage.removeItem(SAVE_KEY); gameState = defaultState; gameState.lastUpdate = Date.now(); showToast("Fehler beim Laden. Spiel zurückgesetzt.", "warning", 7000); } } else { gameState = defaultState; gameState.lastUpdate = Date.now(); } gameState.resources = Number(gameState.resources) || 0; gameState.energy = Number(gameState.energy) || 0; gameState.metal = Number(gameState.metal) || 0; gameState.population = Number(gameState.population) || 0; gameState.moonCrystals = Number(gameState.moonCrystals) || 0; gameState.siloLevel = Number(gameState.siloLevel) || 0; if (!document.getElementById(`${activeTab}-tab`)) activeTab = 'overview'; updateUI(); }
 
          // --- Initialization ---
          function getDefaultGameState() {
-             // *** HIER SIND DIE ANGEPASSTEN KOSTEN ***
+             // *** HIER SIND DIE NOCHMALS ANGEPASSTEN KOSTEN ***
              return {
-                 resources: 0,
-                 energy: 0,
-                 metal: 1, // Startwert leicht erhöht, kann helfen
-                 population: 0,
-                 lastUpdate: Date.now(),
-                 collectorLevel: 0,
-                 collectorBaseCost: 10,
-                 collectorCostMultiplier: 1.12, // Original: 1.15
-                 collectorBaseIncrease: 1,
-                 roverLevel: 0,
-                 roverBaseCost: 250,
-                 roverCostMultiplier: 1.15, // Original: 1.18
-                 roverBaseIncrease: 10,
-                 efficiencyLevel: 0,
-                 efficiencyBaseCost: 100,
-                 efficiencyCostMultiplier: 1.75, // Original: 2 (Deutlich reduziert)
-                 clickPowerLevel: 0,
-                 clickPowerBaseCost: 25,
-                 clickPowerCostMultiplier: 1.18, // Original: 1.2
-                 clickPowerBaseIncrease: 1,
-                 clickMultiplierLevel: 0,
-                 clickMultiplierBaseCost: 500,
-                 clickMultiplierCostMultiplier: 1.6, // Original: 1.8
-                 generatorLevel: 0,
-                 generatorBaseCost: 800, // Original: 1000
-                 generatorCostMultiplier: 1.2, // Original: 1.25
-                 generatorBaseIncrease: 1,
-                 storageLevel: 0,
-                 storageBaseCost: 200, // Original: 250 (Metall)
-                 storageCostMultiplier: 1.5, // Original: 1.7
+                 resources: 0, energy: 0, metal: 1, population: 0, lastUpdate: Date.now(),
+                 collectorLevel: 0, collectorBaseCost: 10, collectorCostMultiplier: 1.12, collectorBaseIncrease: 1,
+                 roverLevel: 0, roverBaseCost: 250, roverCostMultiplier: 1.15, roverBaseIncrease: 10,
+                 efficiencyLevel: 0, efficiencyBaseCost: 100, efficiencyCostMultiplier: 1.75,
+                 clickPowerLevel: 0, clickPowerBaseCost: 25, clickPowerCostMultiplier: 1.18, clickPowerBaseIncrease: 1,
+                 clickMultiplierLevel: 0, clickMultiplierBaseCost: 500, clickMultiplierCostMultiplier: 1.6,
+                 generatorLevel: 0, generatorBaseCost: 800, generatorCostMultiplier: 1.2, generatorBaseIncrease: 1,
+                 storageLevel: 0, storageBaseCost: 200, storageCostMultiplier: 1.5,
                  miningLevel: 0,
-                 miningBaseCost: 500, // Basis ist sehr niedrig, Multiplikator leicht angepasst
-                 miningCostMultiplier: 1.25, // Original: 1.3
+                 miningBaseCost: 400, // NEUER WERT (war 500)
+                 miningCostMultiplier: 1.22, // NEUER WERT (war 1.25)
                  miningBaseIncrease: 1,
-                 housingLevel: 0,
-                 housingBaseCost: 100, // Original: 100 (Metall)
-                 housingCostMultiplier: 1.3, // Original: 1.4
-                 housingBaseIncrease: 0.1,
+                 housingLevel: 0, housingBaseCost: 100, housingCostMultiplier: 1.3, housingBaseIncrease: 0.1,
                  siloLevel: 0,
-                 siloBaseCostDust: 400, // Original: 500
-                 siloBaseCostMetal: 80, // Original: 100
-                 siloCostMultiplier: 1.45, // Original: 1.6
-                 shieldLevel: 0,
-                 shieldBaseCost: 50,
-                 shieldCostMultiplier: 1.4, // Original: 1.5
-                 turretLevel: 0,
-                 turretBaseCost: 100,
-                 turretCostMultiplier: 1.45, // Original: 1.6
-                 moonCrystals: 0,
-                 prestigeRequirementBase: 1000000,
-                 colonizedPlanets: {},
-                 research: {},
-                 ships: { transport: 0, fighter: 0, colony: 0 },
-                 totalResourcesCollected: 0,
-                 totalEnergyGenerated: 0,
-                 totalMetalGenerated: 0,
-                 totalManualClicks: 0,
-                 threatsDefeated: 0,
-                 startTime: Date.now(),
-                 activeThreat: null,
+                 siloBaseCostDust: 300, // NEUER WERT (war 400)
+                 siloBaseCostMetal: 60, // NEUER WERT (war 80)
+                 siloCostMultiplier: 1.4, // NEUER WERT (war 1.45)
+                 shieldLevel: 0, shieldBaseCost: 50, shieldCostMultiplier: 1.4,
+                 turretLevel: 0, turretBaseCost: 100, turretCostMultiplier: 1.45,
+                 moonCrystals: 0, prestigeRequirementBase: 1000000,
+                 colonizedPlanets: {}, research: {}, ships: { transport: 0, fighter: 0, colony: 0 },
+                 totalResourcesCollected: 0, totalEnergyGenerated: 0, totalMetalGenerated: 0, totalManualClicks: 0, threatsDefeated: 0,
+                 startTime: Date.now(), activeThreat: null,
              };
          }
          function buildPlanetList() { if (!planetListContainer) return; planetListContainer.innerHTML = ''; Object.keys(PLANETS).forEach(planetId => { if (planetId === 'moon') return; const planetData = PLANETS[planetId]; const planetDiv = document.createElement('div'); planetDiv.id = `planet-${planetId}-container`; planetDiv.className = 'upgrade-card'; planetDiv.innerHTML = `<div class="text-left flex-grow"><p class="font-semibold text-lg">${planetData.name}</p><p class="text-sm text-gray-400">${planetData.description}</p></div><div id="planet-${planetId}-action" class="flex-shrink-0 w-full sm:w-auto mt-2 sm:mt-0"></div>`; planetListContainer.appendChild(planetDiv); }); }
-         document.addEventListener('DOMContentLoaded', () => { console.log("DOM fully loaded. Initializing Idle Moons (Adjusted Costs)..."); loadGame(); buildPlanetList(); setupEventListeners(); tabContents.forEach(content => { if (content) { const isActive = content.id === `${activeTab}-tab`; content.style.display = isActive ? 'block' : 'none'; content.classList.toggle('active', isActive); content.classList.remove('fadeInContent'); } }); menuItems?.forEach(item => { if (item) item.classList.toggle('active', item.dataset.tab === activeTab); }); setInterval(gameLoop, TICK_RATE_MS); setInterval(checkThreat, THREAT_CHECK_INTERVAL_MS); setInterval(saveGame, 15000); console.log("Idle Moons initialization complete (Adjusted Costs)."); });
+         document.addEventListener('DOMContentLoaded', () => { console.log("DOM fully loaded. Initializing Idle Moons (v8.9c)..."); loadGame(); buildPlanetList(); setupEventListeners(); tabContents.forEach(content => { if (content) { const isActive = content.id === `${activeTab}-tab`; content.style.display = isActive ? 'block' : 'none'; content.classList.toggle('active', isActive); content.classList.remove('fadeInContent'); } }); menuItems?.forEach(item => { if (item) item.classList.toggle('active', item.dataset.tab === activeTab); }); setInterval(gameLoop, TICK_RATE_MS); setInterval(checkThreat, THREAT_CHECK_INTERVAL_MS); setInterval(saveGame, 15000); console.log("Idle Moons initialization complete (v8.9c)."); });
 
     </script>
 
